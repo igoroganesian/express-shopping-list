@@ -25,14 +25,13 @@ router.get("/", function(req, res) {
 
 router.post("/", function(req, res) {
   if (req.body === undefined) throw new BadRequestError();
-  console.log("PARAMS>>>>>>", req.body);
 
   const item = {};
   item.name = req.body.name;
   item.price = req.body.price;
   items.push(item);
 
-  return res.json({added: item});
+  return res.status(201).json({added: item});
 })
 
 router.get("/:name", function(req, res) {
