@@ -1,4 +1,4 @@
-const app  = require("./fakeDb");
+const app  = require("./app");
 
 app.listen(3000, function () {
   console.log(

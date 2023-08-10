@@ -1,7 +1,10 @@
 const express = require("express");
+const { BadRequestError } = require("./expressError");
 
-const { items } = require("./fakeDb")
+const items = require("./fakeDb");
+
 const router = new express.Router();
+
 
 // Each item should be a JavaScript object with the keys of name, and price.
 // clear items each time server restarts
@@ -21,12 +24,51 @@ router.get("/", function(req, res) {
 //     {added: {name: "popsicle", price: 1.45}}
 
 router.post("/", function(req, res) {
+  if (req.body === undefined) throw new BadRequestError();
+  console.log("PARAMS>>>>>>", req.body);
+
   const item = {};
-  item.name = req.param.name;
-  item.price = req.param.price;
+  item.name = req.body.name;
+  item.price = req.body.price;
+  items.push(item);
 
   return res.json({added: item});
 })
+
+router.get("/:name", function(req, res) {
+  for (let item of items) {
+    if (item.name === req.params.name) {
+      return res.json({item})
+    } else {
+      throw new BadRequestError("Item not found");
+    }
+  }
+})
+
+router.patch("/:name", function(req, res) {
+  for (let item of items) {
+    if (item.name === req.params.name) {
+      item.name = req.body.name;
+      item.price = req.body.price;
+      return res.json({updated: {item}})
+    } else {
+      throw new BadRequestError("Item not found")
+    }
+  }
+})
+
+router.delete("/:name", function(req, res) {
+  for (let item in items) {
+    if (items[item].name === req.params.name) {
+      items.splice(item, 1);
+      return res.json({message: "deleted"});
+    } else {
+      throw new BadRequestError("Item not found");
+    }
+  }
+})
+
+
 
 // GET /items/:name: return single item:
 //   {name: "popsicle", "price": 1.45}
@@ -38,4 +80,4 @@ router.post("/", function(req, res) {
 // DELETE /items/:name: delete item:
 //   {message: "Deleted"}
 
-module.exports = { router };
+module.exports = router;

@@ -1,4 +1,3 @@
-js;
 "use strict";
 
 /** ExpressError extends normal JS error so we can
